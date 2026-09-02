@@ -54,13 +54,13 @@ following so you don't rediscover it.
 
 ## Running & testing
 
-From repo root (venv created by `make setup`):
+From repo root (venv created by `bash scripts/setup.sh`):
 
-- `make run` — run the API with `uvicorn --reload --app-dir backend`
-- `make test` — offline unit tests (`pytest backend/tests -v`)
-- `make test-integration` — integration tests (skip without `FIREBASE_ID_TOKEN`)
-- `make db-up` / `make db-down` — start/stop the Postgres container
-- `make generate-clients` — regenerate spec + clients
+- Run the API: `backend/.venv/bin/uvicorn app.main:app --reload --app-dir backend`
+- Unit tests: `backend/.venv/bin/pytest backend/tests -v`
+- Integration tests: `backend/.venv/bin/pytest backend/tests-integration -v` (skips without `FIREBASE_ID_TOKEN`)
+- Start/stop Postgres: `docker compose up -d db` / `docker compose down`
+- Regenerate spec + clients: `bash scripts/generate-clients.sh`
 
 The unit tests use an in-memory SQLite DB and mock Firebase, so they run with no
 Docker or credentials. Run them after any backend change.
@@ -69,8 +69,8 @@ Docker or credentials. Run them after any backend change.
 
 1. Edit the route handler and/or Pydantic schemas in `backend/app/`.
 2. Update unit tests in `backend/tests/`.
-3. Run `make test` until green.
-4. Regenerate the contract: `make generate-clients`. This rewrites
+3. Run `backend/.venv/bin/pytest backend/tests -v` until green.
+4. Regenerate the contract: `bash scripts/generate-clients.sh`. This rewrites
    `backend/contracts/openapi.json`, `clients/typescript/`, and
    `backend/tests-integration/`. Commit the regenerated outputs so the
    contract and generated clients stay in sync.

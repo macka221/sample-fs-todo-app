@@ -59,7 +59,6 @@ teams can collaborate with the same tooling.
 │   ├── setup.sh                # Create venv + install backend deps
 │   └── generate-clients.sh     # Regenerate OpenAPI spec + clients
 ├── docker-compose.yaml         # Local Postgres (hardcoded dev creds)
-├── Makefile                    # Convenience commands
 ├── README.md
 └── CHANGELOG.md
 ```
@@ -97,7 +96,7 @@ tests always speak the same contract as the server.
 To regenerate the spec and clients after changing an endpoint:
 
 ```bash
-make generate-clients
+bash scripts/generate-clients.sh
 ```
 
 ---
@@ -115,8 +114,7 @@ make generate-clients
 ### 1. Set up the Python environment
 
 ```bash
-make setup
-# or: bash scripts/setup.sh
+bash scripts/setup.sh
 ```
 
 This creates `backend/.venv` and installs the backend dependencies.
@@ -124,7 +122,7 @@ This creates `backend/.venv` and installs the backend dependencies.
 ### 2. Start Postgres
 
 ```bash
-make db-up       # docker compose up -d db
+docker compose up -d db
 ```
 
 This starts a `postgres:16` container with the hardcoded dev credentials from
@@ -143,8 +141,7 @@ cp backend/.sample.env backend/.env
 
 ```bash
 source backend/.venv/bin/activate
-make run
-# or: uvicorn app.main:app --reload --app-dir backend
+uvicorn app.main:app --reload --app-dir backend
 ```
 
 The API is now at `http://localhost:8000` with docs at
@@ -183,8 +180,7 @@ These mock the Firebase verifier and use an in-memory SQLite DB, so they run
 anywhere with no external services:
 
 ```bash
-make test
-# or: backend/.venv/bin/pytest backend/tests -v
+backend/.venv/bin/pytest backend/tests -v
 ```
 
 Covers CRUD, ownership scoping (a user can only see/modify their own todos),
@@ -196,7 +192,7 @@ These use the **generated Python client** against a running API + Postgres and a
 real Firebase ID token. They skip gracefully when credentials aren't present:
 
 ```bash
-make test-integration
+backend/.venv/bin/pytest backend/tests-integration -v
 ```
 
 To actually run them you need a real ID token. Mint one with the Firebase Admin
@@ -205,7 +201,7 @@ SDK using your service account, then:
 ```bash
 export FIREBASE_ID_TOKEN="<your-id-token>"
 export API_BASE_URL="http://localhost:8000/api/v1"
-make test-integration
+backend/.venv/bin/pytest backend/tests-integration -v
 ```
 
 ---
@@ -213,8 +209,8 @@ make test-integration
 ## Docker
 
 - [`docker-compose.yaml`](docker-compose.yaml) runs only Postgres for local dev
-  (the app runs via `make run`). Credentials are hardcoded for teaching; never
-  use these in production.
+  (the app itself runs directly via `uvicorn`). Credentials are hardcoded for
+  teaching; never use these in production.
 - [`backend/Dockerfile`](backend/Dockerfile) packages the API itself if you want
   to run the whole stack in containers:
 

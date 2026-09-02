@@ -153,6 +153,17 @@ activemq-data/
 .venv
 backend/.env
 backend/.venv
+
+# openapi-generator generated docs / helpers / CI scaffolding
+clients/typescript/**/*.md
+clients/typescript/git_push.sh
+clients/typescript/.gitignore
+backend/tests-integration/**/*.md
+backend/tests-integration/git_push.sh
+backend/tests-integration/.gitignore
+backend/tests-integration/.github/
+backend/tests-integration/.gitlab-ci.yml
+backend/tests-integration/.travis.yml
 env/
 venv/
 ENV/

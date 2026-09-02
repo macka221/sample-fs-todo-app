@@ -25,4 +25,11 @@ npx --yes @openapitools/openapi-generator-cli@latest generate \
   -o "$BACKEND/tests-integration" \
   --additional-properties=packageName=todo_api_client
 
+# Prune generated boilerplate we don't want to keep: markdown docs, the
+# git_push helper, and CI scaffolding that openapi-generator emits by default.
+find "$ROOT/clients/typescript" "$BACKEND/tests-integration" -name "*.md" -delete
+rm -f "$ROOT/clients/typescript/git_push.sh" "$BACKEND/tests-integration/git_push.sh"
+rm -rf "$BACKEND/tests-integration/.github"
+rm -f "$BACKEND/tests-integration/.gitlab-ci.yml" "$BACKEND/tests-integration/.travis.yml"
+
 echo "Done."

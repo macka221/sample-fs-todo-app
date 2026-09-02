@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Feature
 
 - FastAPI backend in `backend/app/` with:
   - Todo CRUD endpoints (create, list, get, update, delete by id)
@@ -29,8 +29,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Python in `backend/tests-integration/`
 - Client generation script (`scripts/generate-clients.sh`) and venv setup
   (`scripts/setup.sh`)
-- Makefile with `setup`, `run`, `test`, `test-integration`, `db-up`, `db-down`,
-  and `generate-clients` targets
 - Root `README.md` documenting the project, stack, contracts, and run steps
 - `CHANGELOG.md` (this file)
 - opencode agent at `.opencode/agent/backend.md`
+
+### Bugfixes
+
+- Corrected the OpenAPI security scheme so protected endpoints reference the
+  documented `bearerAuth` scheme instead of FastAPI's auto-added `HTTPBearer`,
+  and `/health` + `/auth/signin` are correctly public.
+- Removed the redundant `Makefile` in favor of the documented shell commands.
+- Excluded openapi-generator markdown docs, `git_push.sh`, and generated
+  GitHub/GitLab CI scaffolding from the repo (`.gitignore` +
+  `.openapi-generator-ignore`).
