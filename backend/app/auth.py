@@ -49,10 +49,7 @@ def verify_firebase_token(id_token: str) -> dict:
     _ensure_firebase()
     with tracer.start_as_current_span("firebase.verify_id_token") as span:
         try:
-            claims = firebase_auth.verify_id_token(
-                id_token,
-                audience=settings.firebase_id_token_audience or None,
-            )
+            claims = firebase_auth.verify_id_token(id_token)
         except Exception as exc:  # noqa: BLE001 - any firebase error means invalid token
             logger.warning("Firebase token verification failed: %s", exc)
             span.record_exception(exc)

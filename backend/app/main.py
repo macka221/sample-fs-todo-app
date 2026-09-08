@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from opentelemetry import trace
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
@@ -43,6 +44,14 @@ app = FastAPI(
         {"name": "auth", "description": "Authentication with Firebase ID tokens"},
         {"name": "todos", "description": "Todo CRUD operations"},
     ],
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origin_list,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # The generated clients need to know how to send the bearer token.

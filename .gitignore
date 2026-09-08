@@ -153,6 +153,7 @@ activemq-data/
 .venv
 backend/.env
 backend/.venv
+backend/serviceAccountKey.json
 
 # openapi-generator generated docs / helpers / CI scaffolding
 clients/typescript/**/*.md

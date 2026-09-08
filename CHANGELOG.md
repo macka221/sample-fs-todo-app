@@ -39,6 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     exposed at `GET /metrics`
   - **Traces**: OpenTelemetry SDK with a console span exporter; a span per request
     and around Firebase token verification
+- React/TypeScript frontend under frontend/ with Firebase email/password
+  authentication, protected routes, dashboard metrics, Todo board, registry,
+  complete Todo CRUD, generated API client integration, and TanStack Query.
 
 ### Bugfixes
 
@@ -50,3 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   GitHub/GitLab CI scaffolding from the repo (`.gitignore` +
   `.openapi-generator-ignore`).
 - Added `GET /metrics` (public) to the OpenAPI contract and regenerated clients.
+- Corrected Firebase Admin ID-token verification for the pinned SDK, added
+  configurable FastAPI CORS with preflight coverage, and made backend setup
+  reject unsupported Python versions before creating the virtual environment.
+- Prevented the local Firebase service-account key from being tracked.

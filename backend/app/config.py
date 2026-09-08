@@ -26,6 +26,17 @@ class Settings(BaseSettings):
     firebase_id_token_audience: str = ""
 
 
+# Comma-separated browser origins permitted by CORS in direct API mode.
+    cors_origins: str = "http://localhost:5173"
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [
+            origin.strip().rstrip("/")
+            for origin in self.cors_origins.split(",")
+            if origin.strip()
+        ]
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()

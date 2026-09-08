@@ -142,7 +142,7 @@ cp backend/.sample.env backend/.env
 
 ```bash
 source backend/.venv/bin/activate
-uvicorn app.main:app --reload --app-dir backend
+uvicorn app.main:app --reload --app-dir backend --env-file backend/.env
 ```
 
 The API is now at `http://localhost:8000` with docs at
