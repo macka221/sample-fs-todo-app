@@ -40,3 +40,18 @@ def test_me_returns_current_user(client, fake_auth, auth_header):
     resp = client.get("/api/v1/auth/users/me", headers=auth_header)
     assert resp.status_code == 200
     assert resp.json()["id"] == "user-123"
+
+def test_firebase_verifier_uses_supported_admin_sdk_signature(monkeypatch):
+    from app import auth as auth_module
+
+    captured = {}
+
+    def _verify(id_token):
+        captured["id_token"] = id_token
+        return {"uid": "user-123"}
+
+    monkeypatch.setattr(auth_module, "_ensure_firebase", lambda: None)
+    monkeypatch.setattr(auth_module.firebase_auth, "verify_id_token", _verify)
+
+    assert auth_module.verify_firebase_token("firebase-token")["uid"] == "user-123"
+    assert captured == {"id_token": "firebase-token"}
