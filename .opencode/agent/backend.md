@@ -24,6 +24,10 @@ following so you don't rediscover it.
 - Integration tests + generated Python client: `backend/tests-integration/`
 - OpenAPI spec snapshot: `backend/contracts/openapi.json`
 - Generated TypeScript (axios) client: `clients/typescript/`
+- Observability: `app/observability.py` sets up all three pillars — stdlib
+  logging, prometheus-client counters (served at `/metrics`), and an OpenTelemetry
+  tracer with a **console exporter** (spans print to stdout; no collector). The
+  http middleware in `main.py` records metrics + a span per request.
 
 ## Stack & conventions
 
@@ -61,6 +65,7 @@ From repo root (venv created by `bash scripts/setup.sh`):
 - Integration tests: `backend/.venv/bin/pytest backend/tests-integration -v` (skips without `FIREBASE_ID_TOKEN`)
 - Start/stop Postgres: `docker compose up -d db` / `docker compose down`
 - Regenerate spec + clients: `bash scripts/generate-clients.sh`
+- View observability: `curl localhost:8000/metrics`; logs + trace spans in stdout
 
 The unit tests use an in-memory SQLite DB and mock Firebase, so they run with no
 Docker or credentials. Run them after any backend change.

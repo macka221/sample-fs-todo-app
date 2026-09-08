@@ -80,6 +80,7 @@ All routes are prefixed with `/api/v1` and require a Firebase ID token via
 | PUT    | `/todos/{id}`        | Update a todo by id              |
 | DELETE | `/todos/{id}`        | Delete a todo by id              |
 | GET    | `/health`            | Health check                     |
+| GET    | `/metrics`           | Prometheus metrics               |
 
 Interactive docs are available at `http://localhost:8000/docs` (Swagger UI)
 when the API is running.
@@ -202,6 +203,29 @@ SDK using your service account, then:
 export FIREBASE_ID_TOKEN="<your-id-token>"
 export API_BASE_URL="http://localhost:8000/api/v1"
 backend/.venv/bin/pytest backend/tests-integration -v
+```
+
+---
+
+## Observability (the three pillars)
+
+The backend includes basic exposure to all three pillars of observability.
+
+| Pillar   | Implementation | Where to look |
+| -------- | -------------- | ------------- |
+| Logs     | stdlib `logging`, per-module loggers | Startup/lifespan, todo CRUD events, auth failures, validation errors |
+| Metrics  | `prometheus-client`, exposed at `GET /metrics` | Request counters + latency histogram with `method`/`path`/`status` labels |
+| Traces   | OpenTelemetry SDK with a **console exporter** | A span per request plus a span around the Firebase token verification — printed to stdout as they happen |
+
+- Change logging verbosity with `LOG_LEVEL` in `backend/.env` (DEBUG, INFO, WARNING, ERROR).
+- Metrics are in Prometheus text format, so `prometheus` can scrape `http://localhost:8000/metrics` and Grafana can graph them.
+- Traces print to stdout via the console exporter — no collector required. This is
+  intentional: students can see spans without setting up an observability backend.
+  (ponytail: swap the console exporter for an OTLP one when real tracing is needed.)
+
+```bash
+curl http://localhost:8000/metrics   # view metrics
+# run the API and look at stdout for log lines and span JSON
 ```
 
 ---

@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+import logging
 from typing import Annotated
 
 import firebase_admin
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import credentials, auth as firebase_auth
+from opentelemetry import trace
 from sqlalchemy.orm import Session
 
 from app.crud import get_or_create_user
 from app.database import get_db
 from app.config import settings
+from app.observability import tracer
+
+logger = logging.getLogger(__name__)
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -42,16 +47,22 @@ def verify_firebase_token(id_token: str) -> dict:
     Wrapped so unit tests can monkeypatch it and run fully offline.
     """
     _ensure_firebase()
-    try:
-        return firebase_auth.verify_id_token(
-            id_token,
-            audience=settings.firebase_id_token_audience or None,
-        )
-    except Exception as exc:  # noqa: BLE001 - any firebase error means invalid token
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired Firebase token",
-        ) from exc
+    with tracer.start_as_current_span("firebase.verify_id_token") as span:
+        try:
+            claims = firebase_auth.verify_id_token(
+                id_token,
+                audience=settings.firebase_id_token_audience or None,
+            )
+        except Exception as exc:  # noqa: BLE001 - any firebase error means invalid token
+            logger.warning("Firebase token verification failed: %s", exc)
+            span.record_exception(exc)
+            span.set_status(trace.Status(trace.StatusCode.ERROR))
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired Firebase token",
+            ) from exc
+        span.set_attribute("firebase.uid", claims.get("uid", ""))
+        return claims
 
 
 def get_current_user(

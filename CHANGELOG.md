@@ -32,6 +32,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Root `README.md` documenting the project, stack, contracts, and run steps
 - `CHANGELOG.md` (this file)
 - opencode agent at `.opencode/agent/backend.md`
+- Observability (the three pillars), focused on exposure/example:
+  - **Logs**: stdlib `logging` with per-module loggers for startup/lifespan, todo
+    CRUD events, auth failures, and validation errors; `LOG_LEVEL` setting
+  - **Metrics**: `prometheus-client` with request counter + latency histogram,
+    exposed at `GET /metrics`
+  - **Traces**: OpenTelemetry SDK with a console span exporter; a span per request
+    and around Firebase token verification
 
 ### Bugfixes
 
@@ -42,3 +49,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Excluded openapi-generator markdown docs, `git_push.sh`, and generated
   GitHub/GitLab CI scaffolding from the repo (`.gitignore` +
   `.openapi-generator-ignore`).
+- Added `GET /metrics` (public) to the OpenAPI contract and regenerated clients.

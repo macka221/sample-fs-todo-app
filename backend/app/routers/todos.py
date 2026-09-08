@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -17,6 +18,8 @@ from app.database import get_db
 from app.models import User
 from app.schemas import TodoCreate, TodoOut, TodoUpdate
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/todos", tags=["todos"])
 
 
@@ -32,9 +35,9 @@ def create_new_todo(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    return TodoOut.model_validate(
-        create_todo(db, current_user.id, payload.title, payload.description)
-    )
+    todo = create_todo(db, current_user.id, payload.title, payload.description)
+    logger.info("User %s created todo %s: %r", current_user.id, todo.id, todo.title)
+    return TodoOut.model_validate(todo)
 
 
 @router.get(
@@ -90,6 +93,7 @@ def update_existing_todo(
         description=payload.description,
         completed=payload.completed,
     )
+    logger.info("User %s updated todo %s", current_user.id, todo.id)
     return TodoOut.model_validate(updated)
 
 
@@ -108,3 +112,4 @@ def delete_existing_todo(
     if todo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
     delete_todo(db, todo)
+    logger.info("User %s deleted todo %s", current_user.id, todo_id)

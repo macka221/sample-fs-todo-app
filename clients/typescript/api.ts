@@ -275,6 +275,36 @@ export const MetaApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Expose Prometheus-formatted metrics for scraping.
+         * @summary Prometheus metrics
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        metricsMetricsGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/metrics`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -296,6 +326,18 @@ export const MetaApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['MetaApi.healthHealthGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * Expose Prometheus-formatted metrics for scraping.
+         * @summary Prometheus metrics
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async metricsMetricsGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.metricsMetricsGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MetaApi.metricsMetricsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -314,6 +356,15 @@ export const MetaApiFactory = function (configuration?: Configuration, basePath?
         healthHealthGet(options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: any | null; }> {
             return localVarFp.healthHealthGet(options).then((request) => request(axios, basePath));
         },
+        /**
+         * Expose Prometheus-formatted metrics for scraping.
+         * @summary Prometheus metrics
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        metricsMetricsGet(options?: RawAxiosRequestConfig): AxiosPromise<any> {
+            return localVarFp.metricsMetricsGet(options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -329,6 +380,16 @@ export class MetaApi extends BaseAPI {
      */
     public healthHealthGet(options?: RawAxiosRequestConfig) {
         return MetaApiFp(this.configuration).healthHealthGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Expose Prometheus-formatted metrics for scraping.
+     * @summary Prometheus metrics
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public metricsMetricsGet(options?: RawAxiosRequestConfig) {
+        return MetaApiFp(this.configuration).metricsMetricsGet(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

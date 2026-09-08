@@ -6,6 +6,11 @@ psycopg[binary]==3.2.13
 pydantic-settings==2.7.0
 firebase-admin==6.6.0
 
+# Observability
+prometheus-client==0.26.0
+opentelemetry-api==1.44.0
+opentelemetry-sdk==1.44.0
+
 # Testing
 pytest==8.3.4
 httpx==0.28.1

@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
     database_url: str = "postgresql+psycopg://app:app@localhost:5432/todo"
 
+    # Observability.
+    log_level: str = "INFO"
+
     # Firebase Admin SDK configuration.
     firebase_project_id: str = ""
     # Path to the Firebase service account JSON file (downloaded from console).
